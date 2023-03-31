@@ -1,0 +1,132 @@
+.wrapper {
+    //
+
+    .photo {
+        height: 300px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        overflow: hidden;
+
+        img {
+            height: 100%;
+        }
+
+        &.large {
+            height: unset;
+            width: 100%;
+
+            img {
+                width: 100%;
+            }
+        }
+    }
+
+    .text {
+        &.center {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+
+            .content {
+                text-align: center;
+            }
+        }
+
+        & > div {
+            padding: 7px 0px;
+        }
+
+        .info {
+            display: flex;
+            flex-direction: row;
+
+            color: rgb(114, 133, 172);
+            font-size: 13px;
+
+            .divider {
+                width: 1px;
+                margin: 3px 5px;
+                background-color: rgb(114, 133, 172);
+            }
+
+            .tags {
+                display: flex;
+                flex-direction: row;
+
+                .tag {
+                    padding-right: 3px;
+
+                    &:not(:last-child) {
+                        &::after {
+                            content: ',';
+                        }
+                    }
+                }
+            }
+        }
+
+        .title {
+            font-size: 20px;
+        }
+
+        .content {
+            color: rgb(104, 104, 104);
+        }
+
+        .author {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 17px;
+            color: rgb(138, 138, 138);
+
+            .pfp {
+                width: 25px;
+                height: 25px;
+
+                margin-right: 10px;
+        
+                display: flex;
+                align-items: center;
+                justify-content: center;
+        
+                border-radius: 50%;
+        
+                overflow: hidden;
+        
+                img {
+                    height: 100%;
+                }
+            }
+        }
+    }
+
+    &.minimal {
+        display: flex;
+        flex-direction: row;
+
+        margin: 10px 0px;
+
+        .photo {
+            height: 100px;
+            width: 100px;
+        }
+
+        .text {
+            padding: 0px 15px;
+
+            display: flex;
+            flex-direction: column;
+
+            .info {
+                padding-top: 0px;
+            }
+        }
+    }
+}

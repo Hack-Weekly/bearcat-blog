@@ -1,0 +1,31 @@
+.title {
+    text-align: center;
+    padding: 30px 0px;
+
+    font-size: 30px;
+
+    background-color: rgb(178, 178, 178);
+}
+
+.nav {
+    position: sticky;
+    top: 0;
+
+    margin-bottom: 10px;
+
+    background-color: white;
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+
+    div {
+        padding: 5px;
+    }
+
+    .links {
+        display: flex;
+        flex-direction: row;
+    }
+}

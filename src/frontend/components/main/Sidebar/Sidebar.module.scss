@@ -1,0 +1,26 @@
+.wrapper {
+    width: 300px;
+    margin: 0px 30px;
+
+    .section {
+        padding: 5px;
+
+        .title {
+            padding: 17px 0px;
+            font-size: 20px;
+        }
+
+        .category {
+            color: rgb(114, 133, 172);
+            font-size: 13px;
+            padding: 5px 0px;
+        }
+    }
+
+    .divider {
+        background-color: rgba(0, 0, 0, 0.25);
+
+        padding: 1px 0px;
+        margin: 20px 5px;
+    }
+}
