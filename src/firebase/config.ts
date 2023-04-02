@@ -1,4 +1,10 @@
-import { initializeApp, getApps } from "firebase/app";
+import { initializeApp, getApps, FirebaseApp } from "firebase/app";
+
+/**
+ * This module gets FireBase's information from the application's
+ * environment and allows the application to communicate with
+ * FireBase on Google Cloud
+ */
 
 interface FireBaseConfig {
     apiKey: string,
@@ -9,6 +15,7 @@ interface FireBaseConfig {
     appId: string,
 }
 
+// Next automatically looks for .env prefix files and application can easily get secrets stored in the environment
 const fireBaseConfig: FireBaseConfig = {
     apiKey: process.env.FIREBASE_API_KEY,
     authDomain: process.env.FIREBASE_AUTH_DOMAIN,
@@ -18,6 +25,7 @@ const fireBaseConfig: FireBaseConfig = {
     appId: process.env.FIREBASE_APP_ID,
 }
 
-const firebase_app = getApps().length === 0 ? initializeApp(fireBaseConfig) : getApps()[0];
+// Initializes connection to application's FireBase system.
+const firebase_app: FirebaseApp = getApps().length === 0 ? initializeApp(fireBaseConfig) : getApps()[0];
 
 export default firebase_app;
