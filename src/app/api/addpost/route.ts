@@ -1,17 +1,20 @@
 import firebase_app from "@/firebase/config";
-import type { NextApiResponse, NextApiRequest } from 'next';
-import { getFirestore, collection, addDoc } from 'firebase/firestore';
+import type { NextApiResponse, NextApiRequest } from "next";
+import { getFirestore, collection, addDoc } from "firebase/firestore";
 import { NextResponse } from "next/server";
 
 interface Post {
-    title: string,
-    content: string,
-    author: string,
-    author_id: number,
-    created_at: Date,
+    title: string;
+    content: string;
+    author: string;
+    author_id: number;
+    created_at: Date;
 }
 
-export async function POST(request: NextApiRequest, response: NextApiResponse) {
+export async function POST(
+    request: NextApiRequest,
+    _response: NextApiResponse
+) {
     try {
         // Initialize Firestore Instance
         const db = getFirestore(firebase_app);
@@ -24,11 +27,14 @@ export async function POST(request: NextApiRequest, response: NextApiResponse) {
             author_id: 1,
             created_at: new Date()
         };
-        const postsCollection = collection(db, 'posts');
+        const postsCollection = collection(db, "posts");
         const newPostRef = await addDoc(postsCollection, newPost);
         console.log("New post added with ID: ", newPostRef.id);
 
-        return NextResponse.json({ message: 'Post added successfully', status: 201});
+        return NextResponse.json({
+            message: "Post added successfully",
+            status: 201
+        });
     } catch (error) {
         console.log(error);
         return NextResponse.json({ message: "Error adding post", status: 500 });
