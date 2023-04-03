@@ -11,11 +11,6 @@ export default function Header () {
     return (
         <>
             <div
-                className={styles.title}
-            >
-                BEARCAT BLOGS
-            </div>
-            <div
                 className={styles.nav}
             >
                 <div>SUBSCRIBE</div>
@@ -35,7 +30,13 @@ export default function Header () {
                         </>
                     ))}
                 </div>
-                <div>SEARCH</div>
+                <div>USER</div>
+            </div>
+            <div
+                className={styles.hero}
+            >
+                <h2>BEARCAT BLOGS</h2>
+                <div className={styles.user}><input placeholder='Search for a post' /><button>Search</button></div>
             </div>
         </>
     )
