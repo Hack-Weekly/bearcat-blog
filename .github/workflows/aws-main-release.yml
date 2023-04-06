@@ -1,0 +1,80 @@
+name: AWS-Release
+
+on:
+  pull_request:
+    branches: [main]
+    
+env:
+  RELEASE_REVISION: "pr-${{ github.event.pull_request.number }}-${{ github.event.pull_request.head.sha }}" #Docker Image tag
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }} #Used to Configure AWS credentials
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  AWS_REGION: ${{ secrets.AWS_REGION }}
+  KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }} #kubectl aws eks action
+  KUBE_NAMESPACE: production
+  ECR_REPOSITORY: my-cool-application #AWS ECR action
+  
+jobs:                                            
+  release:                                       
+    name: Release                                
+    runs-on: ubuntu-latest                       
+    steps: 
+    - name: Cancel Previous Runs               
+      uses: styfle/cancel-workflow-action@0.4.1
+      with:                                    
+        access_token: ${{ github.token }} 
+        
+    - name: Checkout                                  
+      uses: actions/checkout@v2                       
+      with:                                           
+        ref: ${{ github.event.pull_request.head.sha }}
+        
+    - name: Configure AWS credentials                          
+      uses: aws-actions/configure-aws-credentials@v1           
+      with:                                                    
+        aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}        
+        aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
+    
+    - name: Set up Docker Buildx                             
+      id: buildx                                             
+      uses: docker/setup-buildx-action@master                
+    - name: Docker cache layers                              
+      uses: actions/cache@v2                                 
+      with:                                                  
+        path: /tmp/.buildx-cache                             
+        key: ${{ runner.os }}-single-buildx-${{ github.sha }}
+        restore-keys: |                                      
+          ${{ runner.os }}-single-buildx
+          
+    - name: Build & Push Image                                                                                      
+      env:                                                                                                          
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}                                                       
+        RELEASE_IMAGE: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ env.RELEASE_REVISION }}
+      run: |
+        docker buildx create --use
+
+        docker buildx build \                                
+          --cache-from=type=local,src=/tmp/.buildx-cache \   
+          --cache-to=type=local,dest=/tmp/.buildx-cache-new \
+          --tag ${{ env.RELEASE_IMAGE }} \                           
+          --target release \                                 
+          --push \                                           
+          .                                                  
+
+          rm -rf /tmp/.buildx-cache
+          mv /tmp/.buildx-cache-new /tmp/.buildx-cache
+      
+    - name: Deploy to Kubernetes cluster                                                                            
+      uses: kodermax/kubectl-aws-eks@master                                                                         
+      env:                                                                                                          
+        RELEASE_IMAGE: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ env.RELEASE_REVISION }}
+      with:                                                                                                         
+        args: set image deployment/my-pod app=${{ env.RELEASE_IMAGE }} --record -n $KUBE_NAMESPACE   
+    
+    - name: Verify Kubernetes deployment                               
+      uses: kodermax/kubectl-aws-eks@master                            
+      with:                                                            
+        args: rollout status deploy my-pod -n $KUBE_NAMESPACE
+
+
+  
